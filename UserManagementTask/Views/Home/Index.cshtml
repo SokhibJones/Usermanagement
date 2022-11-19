@@ -1,0 +1,78 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@using UserManagementTask.Areas.Identity.Data;
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+@inject UserManager<ApplicationUser> userManager;
+@inject SignInManager<ApplicationUser> SignInManager;
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <div class="text-center">
+        <form method="post" asp-controller="Home">
+            <div class="float-end">
+
+                <button type="submit" class="btn btn-danger" name="Block" asp-action="Block"><i class="bi bi-lock"></i>Block</button>
+                <button type="submit" class="btn btn-success" name="Unblock" asp-action="Unblock"><i class="bi bi-unlock"></i>Unblock</button>
+                <button type="submit" class="btn btn-light" name="Delete" asp-action="Delete"><i class="bi bi-trash"></i>Delete</button>
+
+            </div>
+
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th class="active">
+                            <button type="button" class="btn btn-primary" onclick="eventCheckBox()">
+                                <span class="badge badge-light"><i class="bi bi-check"></i></span>Select all
+                            </button>
+                        </th>
+                        <th scope="col">Username</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Last login time</th>
+                        <th scope="col">Registration time</th>
+                        <th scope="col">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in userManager.Users)
+                    {
+                        <tr>
+                            <td>
+                                <div class="form-check text-center">
+                                    <input class="form-check-input" type="checkbox" value="@user.Id" id="@user.Id" name="ids">
+                                    <label class="form-check-label" for="@user.Id"></label>
+                                </div>
+                            </td>
+                            <td>@user.UserName</td>
+                            <td>@user.Email</td>
+                            <td>@user.LoginTime.ToString("MM/dd/yyyy hh:mm tt")</td>
+                            <td>@user.RegistrationTime.ToString("MM/dd/yyyy hh:mm tt")</td>
+                            <td>
+                                @if (user.Status == 0)
+                                {
+                                    <span class="badge bg-success">@user.Status.ToString()</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">@user.Status.ToString()</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </form>
+    </div>
+}
+
+<script>
+    function eventCheckBox() {
+        let checkboxes = document.querySelectorAll('input[type=checkbox]');
+        for (let i = 0; i < checkboxes.length; i++) {
+            checkboxes[i].checked = true;
+
+        }
+    }
+</script>
